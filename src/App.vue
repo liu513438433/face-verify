@@ -18,4 +18,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
+.el-message-box{
+  width:325px;
+}
 </style>

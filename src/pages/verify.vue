@@ -1,18 +1,37 @@
-<template>
+ <template>
   <div id="verify">
     <video id="video" width="100%"></video>
 
     <canvas id="canvas"></canvas>
     <div id="face_square">
-      <div id="face_verify">{{msg}}</div>
-      <div id="tip">用普通话大声读数字</div>
+      <transition name="el-fade-in">
+        <div id="face_verify" v-show="!isFace">请将面部对准摄像头</div>
+      </transition>
+      <transition name="el-zoom-in-center">
+        <div id="tip" v-show="isShow&&isFace">用普通话大声读数字</div>
+      </transition>
       <div id="code">{{code}}</div>
       <div class="square_TL border_"></div>
       <div class="square_TR border_"></div>
       <div class="square_BL border_"></div>
       <div class="square_BR border_"></div>
-      <div id="start">开始</div>
-      <el-progress :text-inside="true" :stroke-width="18" :percentage="progress"></el-progress>
+      <transition name="el-fade-in">
+        <div id="start" v-show="isShow&&isFace">开始</div>
+      </transition>
+      <transition name="el-fade-in">
+        <el-progress :text-inside="true" :stroke-width="18" :percentage="progress" v-show="!isShow&&isFace"></el-progress>
+      </transition>
+    </div>
+    <div id="pending" v-show="isPending&&!isFinish">
+      <div id="pending_msg">
+        <div>识别中...</div>
+        <i class="el-icon-loading"></i>
+      </div>
+    </div>
+    <div id="result">
+      <i class="el-icon-success"></i>
+      <i class="el-icon-error"></i>
+      <div id="msg">{{msg}}</div>
     </div>
   </div>
 </template>
@@ -23,11 +42,17 @@
       return{
         timer: null,
         error_code: 10000,
-        msg: '请将脸部对准镜头',
         flag: false,
         code: null,
+        isPending: false,
         session_id: null,
-        progress: 0
+        progress: 0,
+        isShow: true,
+        isFace: false,
+        isFinish: false,
+        isSuccess: false,
+        isError: false,
+        msg: ''
       }
     },
     computed: {
@@ -72,6 +97,7 @@
             return;
           }
           this.flag = true;
+          this.isShow = false;
           let recorder = new MediaRecorder(stream);
           //开始录制
           recorder.start();
@@ -84,6 +110,7 @@
               recorder.stop();
               clearInterval(timer2);
               timer2 = null
+              this.isPending = true;
             }
           },50);
           //得到有效数据   收集数据
@@ -118,11 +145,13 @@
         xhr.send(data);
         xhr.onreadystatechange =  () => {
           if(xhr.readyState == 4 && xhr.status == 200){
+            //人脸检测成功
             if (JSON.parse(xhr.responseText).result&&JSON.parse(xhr.responseText).result.face_list){
-              console.log('first step has finished!');
+              this.isFace = true;
               //清除定时器
               clearInterval(this.timer);
             }
+            //获取语音验证码成功
             if (JSON.parse(xhr.responseText).result&&JSON.parse(xhr.responseText).result.session_id){
               console.log('already has code!');
               this.code = JSON.parse(xhr.responseText).result.code;
@@ -162,7 +191,7 @@
           // console.log(this.error_code);
           let data1 = `image=${data}&image_type=BASE64`;
           this.ajax('/api/rest/2.0/face/v3/detect?access_token=24.62892a017d22344421715e403d545a14.2592000.1534400488.282335-11511631',data1);
-        },500)
+        },200)
       }
     },
     mounted(){
@@ -245,4 +274,17 @@
         font-size larger
         position absolute
         top 40px
+    #pending
+      width 100%
+      height 100%
+      position absolute
+      color white
+      background-color black
+      #pending_msg
+        margin 60px 0 0
+        div
+          font-size 20px
+          margin-bottom 10px
+        i
+          font-size 40px
 </style>
