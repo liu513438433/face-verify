@@ -33,6 +33,7 @@
 </template>
 
 <script>
+  import axios from 'axios';
   export default {
     data(){
       return{
@@ -123,7 +124,7 @@
             video64.onload= ()=>{
               let video_data = encodeURIComponent(video64.result.slice(23));
               let data2 = `session_id=${this.session_id}&video_base64=${video_data}`;
-              this.ajax('/api/rest/2.0/face/v1/faceliveness/verify?access_token=24.62892a017d22344421715e403d545a14.2592000.1534400488.282335-11511631',data2)
+              this.ajax2('/api/rest/2.0/face/v1/faceliveness/verify?access_token=24.62892a017d22344421715e403d545a14.2592000.1534400488.282335-11511631',data2)
             }
             buffers = null
           }
@@ -156,9 +157,31 @@
           }
         }
       },
+      //ajax2
+      ajax2(url,data){
+        axios.post(url,data)
+          .then((res)=>{
+            let resultData = res.data;
+            //人脸检测成功
+            if (resultData.result&&resultData.result.face_list){
+              this.isFace = true;
+              //清除定时器
+              clearInterval(this.timer);
+            }
+            //获取语音验证码成功
+            if (resultData.result&&resultData.result.session_id){
+              console.log('already has code!');
+              this.code = resultData.result.code;
+              this.session_id = resultData.result.session_id;
+            }
+          })
+          .catch((err)=>{
+            console.log(err);
+          })
+      },
       //获取语音提示码
       getCount(){
-        this.ajax('/api/rest/2.0/face/v1/faceliveness/sessioncode?access_token=24.62892a017d22344421715e403d545a14.2592000.1534400488.282335-11511631','')
+        this.ajax2('/api/rest/2.0/face/v1/faceliveness/sessioncode?access_token=24.62892a017d22344421715e403d545a14.2592000.1534400488.282335-11511631','')
       },
       //开始录制
       startRecord(){
@@ -186,7 +209,7 @@
           let data = encodeURIComponent(canvas.toDataURL().slice(22));
           // console.log(this.error_code);
           let data1 = `image=${data}&image_type=BASE64`;
-          this.ajax('/api/rest/2.0/face/v3/detect?access_token=24.62892a017d22344421715e403d545a14.2592000.1534400488.282335-11511631',data1);
+          this.ajax2('/api/rest/2.0/face/v3/detect?access_token=24.62892a017d22344421715e403d545a14.2592000.1534400488.282335-11511631',data1);
         },200)
       }
     },
