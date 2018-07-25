@@ -1,7 +1,8 @@
 <template>
   <div id="statement">
     <div class="logo_container">
-      <img src="../assets/baidu_logo.png" class="logo"/>
+        <span class="logo1 logo">baidu</span>
+        <span class="logo2 logo">baidu</span>
     </div>
     <div class="content_container">
       <img src="" alt="logo" class="content_logo">
@@ -38,8 +39,19 @@
     .logo_container
       width 280px
       margin 20px auto 40px
+      position relative
+      background-color #000
       .logo
-        width 100%
+        color #fff
+        font-size 100px
+        font-weight bold
+      .logo1
+        text-shadow 5px 3px 0 #FE2C55
+      .logo2
+        text-shadow -5px -3px 0 #00F7EF
+        position absolute
+        left 0
+        top 0
     .content_container
       text-align center
       border 1px lavender solid

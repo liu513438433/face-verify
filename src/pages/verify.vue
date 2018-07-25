@@ -11,10 +11,6 @@
         <div id="tip" v-show="isShow&&isFace">用普通话大声读数字</div>
       </transition>
       <div id="code">{{code}}</div>
-      <div class="square_TL border_"></div>
-      <div class="square_TR border_"></div>
-      <div class="square_BL border_"></div>
-      <div class="square_BR border_"></div>
       <transition name="el-fade-in">
         <div id="start" v-show="isShow&&isFace">开始</div>
       </transition>
@@ -207,8 +203,9 @@
     display flex
     justify-content center
     align-items center
+    position relative
     #video
-      display block
+      position absolute
     #canvas
       display none
     #face_square
@@ -218,37 +215,14 @@
       right 0
       bottom 0
       margin auto
-      border 1px solid gainsboro
+      background url("../../static/image/人脸框.png") no-repeat  center center
+      background-size 80%
       display flex
       justify-content center
       #face_verify
         position absolute
         top -50px
         color deepskyblue
-      .border_
-        position absolute
-        width 30px
-        height 30px
-      .square_TL
-        top -2px
-        left -2px
-        border-top 4px solid deepskyblue
-        border-left 4px solid deepskyblue
-      .square_TR
-        top -2px
-        right -2px
-        border-top 4px solid deepskyblue
-        border-right 4px solid deepskyblue
-      .square_BL
-        bottom -2px
-        left -2px
-        border-bottom 4px solid deepskyblue
-        border-left 4px solid deepskyblue
-      .square_BR
-        bottom -2px
-        right -2px
-        border-bottom 4px solid deepskyblue
-        border-right 4px solid deepskyblue
       #start
         width 150px
         height 30px
