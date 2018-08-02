@@ -61,11 +61,12 @@
       }
     },
     methods: {
-      //使用摄像头
+      //使用摄像头http://icode.baidu.com/repos/baidu/face/html5-liveness-demo/tree/master
       getUserMedia (constraints,success,error){
         if (navigator.mediaDevices.getUserMedia) {
           //最新的标准API
           navigator.mediaDevices.getUserMedia(constraints).then(success).catch(error);
+          console.log(111)
         } else if (navigator.webkitGetUserMedia) {
           //webkit核心浏览器
           navigator.webkitGetUserMedia(constraints,success, error)
