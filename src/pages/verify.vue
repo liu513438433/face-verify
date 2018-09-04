@@ -34,6 +34,7 @@
 
 <script>
   import axios from 'axios';
+  import {mapState} from 'vuex';
   export default {
     data(){
       return{
@@ -53,6 +54,7 @@
       }
     },
     computed: {
+      ...mapState(['name','identify']),
       face_ident(){
         if (this.error_code == 0){
           this.timer = null;
@@ -215,6 +217,10 @@
       }
     },
     mounted(){
+      if(!this.name||!this.identify){
+        this.$router.replace('/');
+        return;
+      }
       this.init()
     }
   }

@@ -1,11 +1,12 @@
 <template>
   <div id="login">
     <div class="logo_container">
-      <img src="../assets/baidu_logo.png" class="logo"/>
+      <img src="../assets/image/logo.png" class="logo"/>
     </div>
     <div class="content_container">
       <div class="tips">
-        <el-alert type="error" :title="msg" center v-show="msg"></el-alert>
+        <p v-show="msg">{{msg}}</p>
+        <p v-show="!msg">3</p>
       </div>
       <div class="name">
         <el-input class="input" clearable v-model="name1" placeholder="请输入您的姓名">
@@ -18,7 +19,7 @@
         </el-input>
       </div>
       <div class="submit">
-        <el-button type="primary" @click="open">开始实名认证</el-button>
+        <el-button type="primary" @click="open">下一步</el-button>
       </div>
     </div>
   </div>
@@ -80,17 +81,17 @@
               sum += ai * wi;
             }
             if(parity[sum % 11] != code[17].toUpperCase()){
-              this.msg = '身份证号码有误，请重新填入';
+              this.msg = '您输入的身份证号有误';
             }else{
               this.msg = '';
               // this.open();
             }
 
           }else{
-            this.msg = '身份证号码有误，请重新填入';
+            this.msg = '您输入的身份证号有误';
           }
         }else{
-          this.msg = '姓名或身份证号码未填写，请填写...';
+          this.msg = '请填写完整身份信息';
         }
       }
     },
@@ -110,7 +111,8 @@
         width 100%
     .content_container
       border 1px lavender solid
-      background-color white
+      background url('../assets/image/background.png') no-repeat
+      background-size cover 
       border-radius 5px
       padding-top 20px
       width 350px
@@ -127,7 +129,12 @@
           width 300px
           margin-top 30px
       .tips
-        margin-bottom 0
-        .el-alert
-          margin 0 auto 
+        p
+          text-align center
+          font-size 15px
+          color red
+          padding 10px 0
+          font-weight bolder
+        :last-child
+          visibility hidden
 </style>

@@ -1,33 +1,55 @@
 <template>
   <div id="statement">
     <div class="logo_container">
-        <span class="logo1 logo">baidu</span>
-        <span class="logo2 logo">baidu</span>
+      <img src="../assets/image/logo.png" alt="logo" class="logo">
     </div>
     <div class="content_container">
-      <img src="" alt="logo" class="content_logo">
+      <img src="../assets/image/faceLogo.png" alt="logo" class="content_logo">
       <p class="tips">
         <el-checkbox v-model="checked"></el-checkbox>
         <span>
           请同意服务提供者及百度使用并传送相关数据用于身份验证。
-          <a href="javascript:">查看协议详情</a>
+          <a href="javascript:" @click="showClose">查看协议详情</a>
         </span>
       </p>
-      <el-button type="primary" :disabled="!checked" @click="open2">同意并下一步</el-button>
+      <el-button type="primary" :disabled="!checked" @click="open2">同意并开始实名认证</el-button>
+    </div>
+    <div class="protocol_container" v-show="isShow">
+      <div class="pHeader">
+        <img src="../assets/image/close.png" alt="close" class="close" @click="showClose">
+        <span class="hTitle">人脸实名认证协议</span>
+      </div>
+      <div class="pContent">
+        1234567890123
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import {mapState} from 'vuex'
   export default {
     data(){
       return{
-        checked: false
+        checked: false,
+        isShow: false
       }
+    },
+    mounted(){
+      if(!this.name||!this.identify){
+        this.$router.replace('/');
+        return;
+      }
+    },
+    computed: {
+      ...mapState(['name','identify'])
     },
     methods: {
       open2(){
         this.$router.push('/verify')
+      },
+      showClose(){
+        this.isShow = !this.isShow
       }
     }
   }
@@ -39,19 +61,8 @@
     .logo_container
       width 280px
       margin 20px auto 40px
-      position relative
-      background-color #000
       .logo
-        color #fff
-        font-size 100px
-        font-weight bold
-      .logo1
-        text-shadow 5px 3px 0 #FE2C55
-      .logo2
-        text-shadow -5px -3px 0 #00F7EF
-        position absolute
-        left 0
-        top 0
+        width 100%
     .content_container
       text-align center
       border 1px lavender solid
@@ -73,4 +84,23 @@
       button
         width 300px
         margin 20px auto 10px
+    .protocol_container
+      text-align start
+      position absolute
+      height 100%
+      width 100%
+      top 0
+      background-color white
+      .pHeader
+        line-height 16px
+        font-size 16px
+        background-color lightgrey
+        padding 10px 0
+        .close
+          height 16px
+          vertical-align text-top
+          margin 0 10px
+        .hTitle
+          font-weight bolder  
 </style>
+
