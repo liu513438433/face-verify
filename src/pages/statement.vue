@@ -27,7 +27,7 @@
     },
     methods: {
       open2(){
-        this.$router.push('/tips')
+        this.$router.push('/verify')
       }
     }
   }

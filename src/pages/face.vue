@@ -4,13 +4,16 @@
       <img src="../assets/baidu_logo.png" class="logo"/>
     </div>
     <div class="content_container">
+      <div class="tips">
+        <el-alert type="error" :title="msg" center v-show="msg"></el-alert>
+      </div>
       <div class="name">
-        <el-input class="input" clearable placeholder="请输入您的姓名">
+        <el-input class="input" clearable v-model="name1" placeholder="请输入您的姓名">
           <p slot="prepend">姓  名</p>
         </el-input>
       </div>
       <div class="identify">
-        <el-input class="input" clearable placeholder="请输入您的身份证号">
+        <el-input class="input" clearable v-model="identify1" placeholder="请输入您的身份证号">
           <p slot="prepend">身份证号</p>
         </el-input>
       </div>
@@ -23,9 +26,26 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex';
   export default {
+    data(){
+      return{
+        name1: '',
+        identify1: '',
+        msg: ''
+      }
+    },
+    mounted(){
+      this.name1 = '';
+      this.identify1 = '';
+    },
     methods: {
       open() {
+        this.inspect_identify();
+        if(this.msg){
+          return;
+        }
+        this.inspect_identify();
         this.$confirm('确认填写无误', '确认信息', {
           customClass: 'messageBox',
           distinguishCancelAndClose: true,
@@ -33,12 +53,49 @@
           cancelButtonText: '取消'
         })
           .then(() => {
+            this.$store.dispatch('getInfo',{info:{name:this.name1,identify:this.identify1}})
             this.$router.push('/statement')
           })
           .catch(() => {
 
           });
+      },
+      inspect_identify(){
+        if(this.identify1&&this.name1){
+          let regExp = /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+          if(regExp.test(this.identify1)){
+            let code = this.identify1.split('');
+            //∑(ai×Wi)(mod 11)
+            //加权因子
+            let factor = [ 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 ];
+            //校验位
+            let parity = [ 1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2 ];
+            let sum = 0;
+            let ai = 0;
+            let wi = 0;
+            for (let i = 0; i < 17; i++)
+            {
+              ai = code[i];
+              wi = factor[i];
+              sum += ai * wi;
+            }
+            if(parity[sum % 11] != code[17].toUpperCase()){
+              this.msg = '身份证号码有误，请重新填入';
+            }else{
+              this.msg = '';
+              // this.open();
+            }
+
+          }else{
+            this.msg = '身份证号码有误，请重新填入';
+          }
+        }else{
+          this.msg = '姓名或身份证号码未填写，请填写...';
+        }
       }
+    },
+    computed: {
+      ...mapState(['name','identify'])
     }
   }
 </script>
@@ -69,4 +126,8 @@
         button
           width 300px
           margin-top 30px
+      .tips
+        margin-bottom 0
+        .el-alert
+          margin 0 auto 
 </style>
