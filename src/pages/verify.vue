@@ -54,7 +54,7 @@
       }
     },
     computed: {
-      ...mapState(['name','identify']),
+      ...mapState(['name','identify','isConfirm']),
       face_ident(){
         if (this.error_code == 0){
           this.timer = null;
@@ -126,8 +126,9 @@
             video64.readAsDataURL(buffers)
             video64.onload= ()=>{
               let video_data = encodeURIComponent(video64.result.slice(23));
+              console.log(video64.result)
               let data2 = `session_id=${this.session_id}&video_base64=${video_data}`;
-              this.ajax2('/api/rest/2.0/face/v1/faceliveness/verify?access_token=24.b77d50bfa40ecec8224f485b4bf992b7.2592000.1538293304.282335-11511631',data2)
+              this.ajax3('/api/rest/2.0/face/v1/faceliveness/verify?access_token=24.b77d50bfa40ecec8224f485b4bf992b7.2592000.1538293304.282335-11511631',data2)
             }
             buffers = null
           }
@@ -169,7 +170,10 @@
             if (resultData.result&&resultData.result.face_list){
               this.isFace = true;
               //清除定时器
+              if(this.timer){
               clearInterval(this.timer);
+              this.timer = null;
+              }
             }
             //获取语音验证码成功
             if (resultData.result&&resultData.result.session_id){
@@ -181,6 +185,18 @@
           .catch((err)=>{
             console.log(err);
           })
+      },
+      //活体验证
+      ajax3(url,data){
+        axios.post(url,data)
+        .then((res)=>{
+          let resultData = res.data;
+          this.$store.dispatch('getError',{error_no:resultData.err_no});
+          this.$router.replace('/resms'); 
+        })
+        .catch((error)=>{
+
+        })
       },
       //获取语音提示码
       getCount(){
@@ -217,7 +233,7 @@
       }
     },
     mounted(){
-      if(!this.name||!this.identify){
+      if(!this.name||!this.identify||!this.isConfirm){
         this.$router.replace('/');
         return;
       }

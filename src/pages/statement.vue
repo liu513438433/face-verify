@@ -46,10 +46,11 @@ import {mapState} from 'vuex'
     },
     methods: {
       open2(){
-        this.$router.push('/verify')
+        this.$store.dispatch('confirm');
+        this.$router.push('/verify');
       },
       showClose(){
-        this.isShow = !this.isShow
+        this.isShow = !this.isShow;
       }
     }
   }

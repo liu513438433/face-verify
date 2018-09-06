@@ -51,8 +51,7 @@
         isFinish: false,
         isSuccess: false,
         isError: false,
-        msg: '',
-        buffers: null
+        msg: ''
       }
     },
     computed: {
@@ -72,7 +71,7 @@
           if(tracking.recorder){
               this.flag = true;
               this.isShow = false;
-
+          let buffers = null;
               //开始录制
           tracking.recorder.start();
           //获取语音验证码
@@ -91,18 +90,20 @@
           tracking.recorder.ondataavailable = (event)=> {
             //收集媒体设备获得的可以使用的数据
             // console.log(event.data);
-            this.buffers = event.data;
+            buffers = event.data;
           }
           tracking.recorder.onstop =()=> {
             //停止录制时触发函数
             let video64 = new FileReader()
-            video64.readAsDataURL(this.buffers)
+            video64.readAsDataURL(buffers)
             video64.onload= ()=>{
-              let video_data = encodeURIComponent(video64.result.slice(23));
-              let data2 = `session_id=${this.session_id}&video_base64=${video_data}`;
+              // let video_data = encodeURIComponent(video64.result.slice(23));
+              // console.log(video_data);
+              let video_data1 = encodeURIComponent(base641.slice(23));
+              let data2 = `session_id=${this.session_id}&video_base64=${video_data1}`;
               this.ajax2('/api/rest/2.0/face/v1/faceliveness/verify?access_token=24.b77d50bfa40ecec8224f485b4bf992b7.2592000.1538293304.282335-11511631',data2)
             }
-            this.buffers = null
+            buffers = null
           }
 
           }
@@ -172,7 +173,6 @@
 
         tracking.track('#video', tracker, { camera: true });
         tracker.on('track',function(event){
-            painting.clearRect(0,0,canvas.width,canvas.height);
             if(event.data.length !== 0){
                 self.isFace = true;
             }

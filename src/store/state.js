@@ -4,5 +4,7 @@
 
 export default{
     name: '',
-    identify: ''
+    identify: '',
+    isConfirm: false,
+    error_no: ''
 }
