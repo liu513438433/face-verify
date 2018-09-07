@@ -36,6 +36,7 @@
   import axios from 'axios';
   import '../assets/tracking.js';
   import '../assets/face.js';
+  import {mapState} from 'vuex';
   export default {
     data(){
       return{
@@ -55,6 +56,7 @@
       }
     },
     computed: {
+      ...mapState(['name','identify','isConfirm']),
       face_ident(){
         if (this.error_code == 0){
           this.timer = null;
@@ -97,38 +99,14 @@
             let video64 = new FileReader()
             video64.readAsDataURL(buffers)
             video64.onload= ()=>{
-              // let video_data = encodeURIComponent(video64.result.slice(23));
-              // console.log(video_data);
-              let video_data1 = encodeURIComponent(base641.slice(23));
-              let data2 = `session_id=${this.session_id}&video_base64=${video_data1}`;
-              this.ajax2('/api/rest/2.0/face/v1/faceliveness/verify?access_token=24.b77d50bfa40ecec8224f485b4bf992b7.2592000.1538293304.282335-11511631',data2)
+              let video_data = encodeURIComponent(video64.result.slice(23));
+              let data2 = `session_id=${this.session_id}&video_base64=${video_data}`;
+              this.ajax('/api/rest/2.0/face/v1/faceliveness/verify?access_token=24.b77d50bfa40ecec8224f485b4bf992b7.2592000.1538293304.282335-11511631',data2)
             }
             buffers = null
           }
 
           }
-      },
-      ajax(url,data){
-        let xhr = new XMLHttpRequest();
-        xhr.open('post',url);
-        xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xhr.send(data);
-        xhr.onreadystatechange =  () => {
-          if(xhr.readyState == 4 && xhr.status == 200){
-            //人脸检测成功
-            if (JSON.parse(xhr.responseText).result&&JSON.parse(xhr.responseText).result.face_list){
-              this.isFace = true;
-              //清除定时器
-              clearInterval(this.timer);
-            }
-            //获取语音验证码成功
-            if (JSON.parse(xhr.responseText).result&&JSON.parse(xhr.responseText).result.session_id){
-              console.log('already has code!');
-              this.code = JSON.parse(xhr.responseText).result.code;
-              this.session_id = JSON.parse(xhr.responseText).result.session_id;
-            }
-          }
-        }
       },
       //ajax2
       ajax2(url,data){
@@ -145,6 +123,19 @@
           .catch((err)=>{
             console.log(err);
           })
+          
+      },
+      //活体识别视频检测
+      ajax(url,data){
+        axios.post(url,data)
+        .then((res)=>{
+          let resultData = res.data;
+          this.$store.dispatch('getError',{error_no:resultData.err_no});
+          this.$router.replace('/resms'); 
+        })
+        .catch((error)=>{
+
+        })
       },
       //获取语音提示码
       getCount(){
@@ -156,10 +147,10 @@
       },
       //初始化
       init(){
-        let canvas = document.getElementById('canvas');
-        canvas.width = document.body.clientWidth;
-        canvas.height = document.body.clientHeight * 0.6;
-        let painting = canvas.getContext('2d');
+        // let canvas = document.getElementById('canvas');
+        // canvas.width = document.body.clientWidth;
+        // canvas.height = document.body.clientHeight * 0.6;
+        // let painting = canvas.getContext('2d');
         let video = document.getElementById('video');
         let square = document.getElementById('face_square');
         square.style.width = document.body.clientWidth * 0.7 + 'px';
@@ -171,15 +162,23 @@
         tracker.setStepSize(2);
         tracker.setEdgesDensity(0.1);
 
-        tracking.track('#video', tracker, { camera: true });
+        tracking.track('#video', tracker, { camera: true ,audio: true});
         tracker.on('track',function(event){
+            console.log(111);
             if(event.data.length !== 0){
                 self.isFace = true;
+                tracker.removeListener('track',function(event){
+                  console.log(222);
+                })
             }
         })
       }
     },
     mounted(){
+      // if(!this.name||!this.identify||!this.isConfirm){
+      //   this.$router.replace('/');
+      //   return;
+      // }
       this.init()
     }
   }

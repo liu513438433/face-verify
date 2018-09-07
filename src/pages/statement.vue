@@ -47,7 +47,7 @@ import {mapState} from 'vuex'
     methods: {
       open2(){
         this.$store.dispatch('confirm');
-        this.$router.push('/verify');
+        this.$router.push('/verify1');
       },
       showClose(){
         this.isShow = !this.isShow;

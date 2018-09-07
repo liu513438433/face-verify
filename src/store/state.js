@@ -6,5 +6,6 @@ export default{
     name: '',
     identify: '',
     isConfirm: false,
-    error_no: ''
+    error_no: '',
+    isVerify: ''
 }

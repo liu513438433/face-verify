@@ -10,5 +10,6 @@ export default{
     },
     [GETERROR](state,{error_no}){
         state.error_no = error_no;
+        state.isVerify = true;
     }
 }
