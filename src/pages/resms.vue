@@ -32,7 +32,7 @@ import {mapState} from 'vuex'
       }
     },
     mounted(){
-      if(!this.name||!this.identify||!this.isConfirm||!this.isVerify){
+      if(!this.name||!this.identify||!this.isVerify){
         this.$router.replace('/');
         return;
       }
@@ -41,7 +41,7 @@ import {mapState} from 'vuex'
         }
     },
     computed: {
-      ...mapState(['name','identify','isConfirm','error_no','isVerify'])
+      ...mapState(['name','identify','error_no','isVerify'])
     },
     methods: {
       marching(err){

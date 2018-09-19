@@ -19,16 +19,6 @@ export default new Router({
       component: Login
     },
     {
-      path: '/statement',
-      name: 'statement',
-      component: Statement
-    },
-    {
-      path: '/tips',
-      name: 'tips',
-      component: Tips
-    },
-    {
       path: '/verify',
       name: 'verify',
       component: Verify

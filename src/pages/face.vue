@@ -18,9 +18,25 @@
           <p slot="prepend">身份证号</p>
         </el-input>
       </div>
+      <p class="tips1">
+        <el-checkbox v-model="checked"></el-checkbox>
+        <span>
+          请同意服务提供者及百度使用并传送相关数据用于身份验证。
+          <a href="javascript:" @click="showClose">查看协议详情</a>
+        </span>
+      </p>
       <div class="submit">
-        <el-button type="primary" @click="open">下一步</el-button>
+        <el-button type="primary" @click="open" :disabled="!checked">下一步</el-button>
       </div>
+    </div>
+    <div class="protocol_container" v-show="isShow">
+        <div class="pHeader">
+          <img src="../assets/image/close.png" alt="close" class="close" @click="showClose">
+          <span class="hTitle">人脸实名认证协议</span>
+        </div>
+        <div class="pContent">
+          1234567890123
+        </div>
     </div>
   </div>
 
@@ -33,7 +49,9 @@
       return{
         name1: '',
         identify1: '',
-        msg: ''
+        msg: '',
+        checked: false,
+        isShow: false
       }
     },
     mounted(){
@@ -55,11 +73,14 @@
         })
           .then(() => {
             this.$store.dispatch('getInfo',{info:{name:this.name1,identify:this.identify1}})
-            this.$router.push('/statement')
+            this.$router.push('/verify')
           })
           .catch(() => {
 
           });
+      },
+      showClose(){
+        this.isShow = !this.isShow;
       },
       inspect_identify(){
         if(this.identify1&&this.name1){
@@ -137,4 +158,22 @@
           font-weight bolder
         :last-child
           visibility hidden
+    .protocol_container
+      text-align start
+      position absolute
+      height 100%
+      width 100%
+      top 0
+      background-color white
+      .pHeader
+        line-height 16px
+        font-size 16px
+        background-color lightgrey
+        padding 10px 0
+        .close
+          height 16px
+          vertical-align text-top
+          margin 0 10px
+        .hTitle
+          font-weight bolder
 </style>

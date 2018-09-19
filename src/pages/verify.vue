@@ -54,7 +54,7 @@
       }
     },
     computed: {
-      ...mapState(['name','identify','isConfirm']),
+      ...mapState(['name','identify']),
       face_ident(){
         if (this.error_code == 0){
           this.timer = null;
@@ -233,7 +233,7 @@
       }
     },
     mounted(){
-      if(!this.name||!this.identify||!this.isConfirm){
+      if(!this.name||!this.identify){
         this.$router.replace('/');
         return;
       }
